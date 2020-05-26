@@ -1,6 +1,7 @@
 import 'package:naijagospel/components/default_scafold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:naijagospel/service/state_manager.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  // StateManager stateManager = StateManager();
   iniApp() {
     Future.delayed(Duration(seconds: 4), () {
       Navigator.pushNamed(context, '/home');

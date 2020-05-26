@@ -1,10 +1,12 @@
+import 'package:naijagospel/api/api_manager.dart';
+import 'package:naijagospel/components/custom_header.dart';
 import 'package:naijagospel/components/default_scafold.dart';
-import 'package:naijagospel/models/post_model.dart';
-import 'package:naijagospel/service/api_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:naijagospel/service/state_manager.dart';
 import 'package:naijagospel/utils/font_scaler.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,36 +15,33 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ApiManager apiManager = ApiManager();
-  List<PostModel> list = [];
+  StateManager stateManager = StateManager();
   int eventPage = 2;
-  List<PostModel> eventlist = [];
   ScrollController _scrollController;
+  void initHome() async {
+    await stateManager.getlistOfPost();
+    await stateManager.fetchEvents();
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchData();
+    initHome();
+    print(stateManager.listOfPost);
     _scrollController = new ScrollController()..addListener(_scrollListener);
   }
 
   _scrollListener() async {
-    if (_scrollController.position.extentAfter == 0) {
-      if (eventPage <= 3) {
-        var data2 = await apiManager.getPostPage(page: eventPage);
-        setState(() {
-          eventlist = [...eventlist, ...data2];
-          eventPage = ++eventPage;
-        });
-      }
-    }
-  }
-
-  fetchData() async {
-    var data = await apiManager.getPost();
-    var events = await apiManager.getPostPage(page: 1);
-    setState(() {
-      list = data;
-      eventlist = events;
-    });
+    // if (_scrollController.position.extentAfter == 0) {
+    //   if (eventPage <= 3) {
+    //     var data2 = await apiManager.getPostPage(page: eventPage);
+    //     setState(() {
+    //       eventlist = [...eventlist, ...data2];
+    //       eventPage = ++eventPage;
+    //     });
+    //   }
+    // }
   }
 
   List<Widget> _returnPost(List item, {FontScaler fontScaler}) {
@@ -120,62 +119,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<StateManager>(context, listen: false);
     final fontScaler = FontScaler(context);
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
     return DefaultScaffold(
-        body: list.isEmpty
+        body: state.listOfPost.isEmpty
             ? LinearProgressIndicator(
                 backgroundColor: Colors.white,
               )
             : ListView(
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      image: DecorationImage(
-                          image: AssetImage('assets/header-logo.png'),
-                          fit: BoxFit.cover),
-                    ),
-                    height: _height * 0.15,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Icon(Icons.menu),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset(
-                                'assets/nglogo.png',
-                                height: 40.0,
-                              ),
-                              SizedBox(height: 5.0),
-                              Text(
-                                "NAIJAGOSPEL",
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontFamily: "Felix Titling",
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "it's all about you",
-                                style: TextStyle(
-                                  color: Colors.greenAccent[700],
-                                  fontFamily: "Mistral",
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Icon(Icons.search)
-                        ],
-                      ),
-                    ),
-                  ),
+                  CustomHeader(),
                   SizedBox(height: 10),
                   Container(
                     height: _height * 0.30,
@@ -184,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           flex: 1,
                           child: CachedNetworkImage(
-                            imageUrl: list[0].imgUrl,
+                            imageUrl: state.listOfPost[0].imgUrl,
                             imageBuilder: (context, imageProvider) => Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
@@ -204,13 +159,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Container(
                             // height: _height * 0.30,
                             child: ListView.builder(
-                              itemCount: list.length,
+                              itemCount: state.listOfPost.length,
                               itemBuilder: (ctx, i) {
                                 return Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   // child: Text('${list[i].title}'),
                                   child: Html(
-                                    data: '${list[i].title}',
+                                    data: '${state.listOfPost[i].title}',
                                     defaultTextStyle: TextStyle(
                                         color: Colors.white,
                                         fontSize: fontScaler.sp(30)),
@@ -252,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                     child: ListView.builder(
                         controller: _scrollController,
-                        itemCount: eventlist.length,
+                        itemCount: state.listOfEvents.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (ctx, i) {
                           return Container(
@@ -265,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Expanded(
                                       flex: 4,
                                       child: CachedNetworkImage(
-                                        imageUrl: eventlist[i].imgUrl,
+                                        imageUrl: state.listOfEvents[i].imgUrl,
                                         placeholder: (context, url) => Center(
                                             child: CircularProgressIndicator()),
                                         imageBuilder:
@@ -290,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           alignment: Alignment.center,
                                           child: Html(
                                             data:
-                                                '${eventlist[i].title.substring(0, 25)} [...]',
+                                                '${state.listOfEvents[i].title.substring(0, 25)} [...]',
 
                                             // textAlign: TextAlign.center,
                                             defaultTextStyle: TextStyle(
@@ -327,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  ..._returnPost(list, fontScaler: fontScaler),
+                  ..._returnPost(state.listOfPost, fontScaler: fontScaler),
                   Container(
                     height: 20,
                     color: Colors.white,
@@ -377,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )),
                     ],
                   ),
-                  ..._returnPost(list, fontScaler: fontScaler),
+                  ..._returnPost(state.listOfPost, fontScaler: fontScaler),
                   Container(
                     // height: _height * 0.15,
                     padding: EdgeInsets.all(5),
