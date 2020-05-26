@@ -1,4 +1,4 @@
-# app
+# NaijaGospel
 
 NaijaGospel Entertainment [RC Number: 2940160]
 

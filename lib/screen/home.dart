@@ -45,24 +45,29 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  List<Widget> _returnPost(List item) {
+  List<Widget> _returnPost(List item, {FontScaler fontScaler}) {
     List<Widget> _list = [];
 
     for (var i = 0; i < item.length; i++) {
       _list.add(Container(
         padding: const EdgeInsets.all(5.0),
-        // child: Text('${list[i].title}'),
         child: Column(
           children: <Widget>[
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                  child: CachedNetworkImage(
-                    fit: BoxFit.fill,
-                    imageUrl: item[i].imgUrl,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  child: Container(
+                    // height: 150,
+                    constraints: BoxConstraints(minHeight: 150),
+
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: item[i].imgUrl,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
                   ),
                 ),
                 SizedBox(width: 6),
@@ -78,16 +83,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Html(
                         data: item[i].shortDescription,
-                        defaultTextStyle:
-                            TextStyle(color: Colors.white, fontSize: 11),
+                        defaultTextStyle: TextStyle(
+                            color: Colors.white, fontSize: fontScaler.sp(25)),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
+            SizedBox(height: 3),
             Container(
-              height: 5,
+              height: 1.5,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                       colors: [
@@ -262,17 +268,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                         imageUrl: eventlist[i].imgUrl,
                                         placeholder: (context, url) => Center(
                                             child: CircularProgressIndicator()),
-                                        imageBuilder: (context,
-                                                imageProvider) =>
-                                            Container(
-                                                width: _width * 0.35,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3),
-                                                    image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover))),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          width: _width * 0.35,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(3),
+                                            image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     SizedBox(height: 3),
@@ -282,22 +289,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Container(
                                           padding: EdgeInsets.all(3),
                                           alignment: Alignment.center,
-                                          child: Text(
-                                            '${eventlist[i].title.substring(0, 20)}[...]',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: fontScaler.sp(20)),
+                                          child:
+                                              // Text(
+                                              //   '${eventlist[i].title.substring(0, 30)}[...]',
+                                              //   // textAlign: TextAlign.center,
+                                              //   style: TextStyle(
+                                              //       fontSize: fontScaler.sp(20)),
+                                              // ),
+                                              Html(
+                                            data:
+                                                '${eventlist[i].title.substring(0, 25)} [...]',
+
+                                            // textAlign: TextAlign.center,
+                                            defaultTextStyle: TextStyle(
+                                              fontSize: fontScaler.sp(15),
+                                            ),
                                           ),
-                                          // Html(
-
-                                          //   data: '${eventlist[i].title}',
-
-                                          //   // textAlign: TextAlign.center,
-                                          //   defaultTextStyle: TextStyle(
-                                          //     fontSize: 10.0,
-
-                                          //   ),
-                                          // ),
                                           decoration: BoxDecoration(
                                             color: Colors.black,
                                             borderRadius:
@@ -328,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  ..._returnPost(list),
+                  ..._returnPost(list, fontScaler: fontScaler),
                   Container(
                     height: 20,
                     color: Colors.white,
@@ -378,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )),
                     ],
                   ),
-                  ..._returnPost(list),
+                  ..._returnPost(list, fontScaler: fontScaler),
                   Container(
                     // height: _height * 0.15,
                     padding: EdgeInsets.all(5),
