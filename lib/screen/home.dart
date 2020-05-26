@@ -284,19 +284,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     SizedBox(height: 3),
                                     Flexible(
-                                      // flex: 2,
                                       child: FractionallySizedBox(
                                         child: Container(
                                           padding: EdgeInsets.all(3),
                                           alignment: Alignment.center,
-                                          child:
-                                              // Text(
-                                              //   '${eventlist[i].title.substring(0, 30)}[...]',
-                                              //   // textAlign: TextAlign.center,
-                                              //   style: TextStyle(
-                                              //       fontSize: fontScaler.sp(20)),
-                                              // ),
-                                              Html(
+                                          child: Html(
                                             data:
                                                 '${eventlist[i].title.substring(0, 25)} [...]',
 
