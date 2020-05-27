@@ -1,8 +1,8 @@
 # NaijaGospel
 
 NaijaGospel Entertainment [RC Number: 2940160]
-![Test, Build and Release apk](https://github.com/Emex4gman/naijagospel/workflows/Test,%20Build%20and%20Release%20apk/badge.svg)
 
+![Test, Build and Release apk](https://github.com/Emex4gman/naijagospel/workflows/Test,%20Build%20and%20Release%20apk/badge.svg?branch=master)
 ## Getting Started
 
 This project is a starting point for a Flutter application.
