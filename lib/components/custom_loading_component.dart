@@ -12,9 +12,7 @@ class CustomLoader extends StatelessWidget {
           Text(
             loadingMessage,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-            ),
+            style: TextStyle(backgroundColor: Colors.black),
           ),
           SizedBox(height: 24),
           CircularProgressIndicator(

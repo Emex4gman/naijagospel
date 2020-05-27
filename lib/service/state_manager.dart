@@ -7,7 +7,7 @@ import 'package:naijagospel/repository/content_repository.dart';
 class StateManager with ChangeNotifier {
   static StateManager _stateManager;
   ContentRepository _contentRepository = ContentRepository();
-  ApiResponse apiPostResponse;
+  ApiResponse apiPostResponse = ApiResponse.loading('Fetching Details');
   ApiResponse apiEventsResponse;
   // static SharedPreferences _sharedPreferences;
   StateManager.createInstance();
@@ -22,7 +22,6 @@ class StateManager with ChangeNotifier {
   }
 
   getlistOfPost() async {
-    print('getlistOfPost');
     apiPostResponse = ApiResponse.loading('Fetching Details');
     try {
       listOfPost = await _contentRepository.getPostPage();
@@ -31,7 +30,6 @@ class StateManager with ChangeNotifier {
       apiPostResponse = ApiResponse.error(e.toString());
       print(e);
     }
-    print(apiPostResponse.toString());
 
     notifyListeners();
   }
@@ -43,6 +41,19 @@ class StateManager with ChangeNotifier {
       apiEventsResponse = ApiResponse.completed(listOfEvents);
     } catch (e) {
       apiEventsResponse = ApiResponse.error(e.toString());
+      print(e);
+    }
+    notifyListeners();
+  }
+
+  fetchMoreEvents({int page}) async {
+    // apiEventsResponse = ApiResponse.loading('Fetching More Data');
+    try {
+      List<PostModel> newList = await _contentRepository.getEvents(page: page);
+      this.listOfEvents = [...this.listOfEvents, ...newList];
+      // apiEventsResponse = ApiResponse.completed(listOfEvents);
+    } catch (e) {
+      // apiEventsResponse = ApiResponse.error(e.toString());
       print(e);
     }
     notifyListeners();

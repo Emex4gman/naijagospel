@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naijagospel/api/api_response_model.dart';
 import 'package:naijagospel/components/custom_loading_component.dart';
+import 'package:naijagospel/components/error_ui.dart';
 
 class UiManager extends StatelessWidget {
   final ApiResponse apiResponse;
@@ -18,8 +19,8 @@ class UiManager extends StatelessWidget {
         return onCompleteChild;
         break;
       case Status.ERROR:
-        return CustomLoader(
-          loadingMessage: apiResponse.message,
+        return ErrorUi(
+          message: apiResponse.message,
         );
         break;
       default:
