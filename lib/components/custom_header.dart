@@ -8,10 +8,9 @@ class CustomHeader extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black,
-        image: DecorationImage(
-            image: AssetImage('assets/header-logo.png'), fit: BoxFit.cover),
-      ),
+          color: Colors.black,
+          image: DecorationImage(
+              image: AssetImage('assets/header-logo.png'), fit: BoxFit.cover)),
       height: _height * 0.15,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.0),

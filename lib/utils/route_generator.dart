@@ -1,12 +1,17 @@
-import 'package:naijagospel/screen/home.dart';
+import 'package:naijagospel/screen/home/home.dart';
 import 'package:naijagospel/screen/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:naijagospel/screen/single_post/single_post_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    var arg = settings.arguments;
     switch (settings.name) {
       case '/home':
         return customPageRouteBuilder(HomeScreen());
+        break;
+      case '/post':
+        return customPageRouteBuilder(SinglePostScreen(post: arg));
         break;
       default:
         return customPageRouteBuilder(LoadingScreen());

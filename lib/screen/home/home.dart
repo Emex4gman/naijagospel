@@ -35,11 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> _list = [];
 
     for (var i = 0; i < item.length; i++) {
-      _list.add(CustomIndiviualTile(
-        imgUrl: item[i].imgUrl,
-        shortDescription: item[i].shortDescription,
-        title: item[i].title,
-        fontScaler: fontScaler,
+      _list.add(GestureDetector(
+        onTap: () => Navigator.pushNamed(context, '/post', arguments: item[i]),
+        child: CustomIndiviualTile(
+          imgUrl: item[i].imgUrl,
+          shortDescription: item[i].shortDescription,
+          title: item[i].title,
+          fontScaler: fontScaler,
+        ),
       ));
     }
     return _list;
