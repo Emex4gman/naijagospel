@@ -5,7 +5,8 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class NaijaGospelVideoPlayer extends StatefulWidget {
   final String videoLink;
-  NaijaGospelVideoPlayer({Key key, this.videoLink})
+  final bool autoPlay;
+  NaijaGospelVideoPlayer({Key key, this.videoLink, this.autoPlay = true})
       : assert(videoLink != null && videoLink.contains('youtu')),
         super(key: key);
 
@@ -25,20 +26,27 @@ class _NaijaGospelVideoPlayerState extends State<NaijaGospelVideoPlayer> {
   @override
   void initState() {
     super.initState();
-
     _youTubeController = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(widget.videoLink),
-      flags: YoutubePlayerFlags(autoPlay: true),
+      flags: YoutubePlayerFlags(
+        autoPlay: widget.autoPlay,
+      ),
     )..addListener(listener);
   }
 
   void listener() {
-    if (_isPlayerReady && mounted && !_youTubeController.value.isFullScreen) {
-      setState(() {
-        _playerState = _youTubeController.value.playerState;
-        _videoMetaData = _youTubeController.metadata;
-      });
-    }
+    // if (_isPlayerReady && mounted && !_youTubeController.value.isFullScreen) {
+    //   setState(() {
+    //     _playerState = _youTubeController.value.playerState;
+    //     _videoMetaData = _youTubeController.metadata;
+    //   });
+    // }
+  }
+  @override
+  void deactivate() {
+    // Pauses video while navigating to next page.
+    _youTubeController.pause();
+    super.deactivate();
   }
 
   @override
@@ -52,17 +60,6 @@ class _NaijaGospelVideoPlayerState extends State<NaijaGospelVideoPlayer> {
           print("am ready");
         },
       )),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     _youTubeController.value.isPlaying
-      //         ? _youTubeController.pause()
-      //         : _youTubeController.play();
-      //     setState(() {});
-      //   },
-      //   child: Icon(
-      //     _youTubeController.value.isPlaying ? Icons.play_arrow : Icons.pause,
-      //   ),
-      // ),
     );
   }
 

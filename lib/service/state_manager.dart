@@ -66,6 +66,19 @@ class StateManager with ChangeNotifier {
     notifyListeners();
   }
 
+  fetchVideos() async {
+    apiEventsResponse = ApiResponse.loading('Fetching Data');
+    responseMap['fetchNewRelease'] = ApiResponse.loading('Fetching Data');
+    try {
+      videoList = await _contentRepository.getVideos();
+      apiEventsResponse = ApiResponse.completed(videoList);
+    } catch (e) {
+      apiEventsResponse = ApiResponse.error(e.toString());
+      print(e);
+    }
+    notifyListeners();
+  }
+
   fetchQoutes() async {
     apiEventsResponse = ApiResponse.loading('Fetching Data');
     responseMap['fetchQoutes'] = ApiResponse.loading('Fetching Data');

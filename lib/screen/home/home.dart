@@ -8,6 +8,7 @@ import 'package:naijagospel/components/drawer.dart';
 import 'package:naijagospel/components/featured_container.dart';
 import 'package:naijagospel/components/footer.dart';
 import 'package:naijagospel/components/horizontal_event_widget.dart';
+import 'package:naijagospel/components/video_player_widget.dart';
 import 'package:naijagospel/models/post_model.dart';
 import 'package:naijagospel/service/state_manager.dart';
 import 'package:naijagospel/utils/font_scaler.dart';
@@ -18,7 +19,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   final ApiManager apiManager = ApiManager();
   final StateManager stateManager = StateManager();
   int eventPage = 2;
@@ -27,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     stateManager.fetchEvents();
     stateManager.fetchNewRelease();
     stateManager.fetchQoutes();
+    stateManager.fetchVideos();
     setState(() {});
   }
 
@@ -63,8 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  var nuum = 0;
+
   @override
   Widget build(BuildContext context) {
+    print(nuum += 1);
+
     final state = Provider.of<StateManager>(context, listen: true);
     final fontScaler = FontScaler(context);
     double _height = MediaQuery.of(context).size.height;
@@ -121,7 +128,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: Center(child: Text('Video palyer goes here')),
+                  child: Center(
+                      child:new NaijaGospelVideoPlayer(
+                    videoLink: 'https://www.youtube.com/embed/WtAHhlIAd20',
+                    autoPlay: false,
+                  )),
                 ),
               ),
               Divider(height: 5, color: Colors.white),
@@ -153,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
               CustomBanner('NEW RELEASE'),
               ..._returnPost(state.newReleaseList, fontScaler: fontScaler),
-
+              CustomBanner('Videos'),
+              ..._returnPost(state.videoList, fontScaler: fontScaler),
               CustomBanner('QOUTES'),
-
               ..._returnPost(state.qouteList, fontScaler: fontScaler),
               // ..._returnPost(state.listOfPost, fontScaler: fontScaler),
               Footer()
@@ -165,4 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
