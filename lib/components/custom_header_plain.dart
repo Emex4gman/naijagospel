@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomHeader extends StatelessWidget {
-  final Function openDrawer;
-  CustomHeader({this.openDrawer});
+class CustomHeaderPlain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _height = MediaQuery.of(context).size.height;
@@ -18,9 +16,8 @@ class CustomHeader extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            GestureDetector(onTap: openDrawer, child: Icon(Icons.menu)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -47,7 +44,6 @@ class CustomHeader extends StatelessWidget {
                 ),
               ],
             ),
-            Icon(Icons.search)
           ],
         ),
       ),

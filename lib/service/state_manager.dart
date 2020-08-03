@@ -9,10 +9,17 @@ class StateManager with ChangeNotifier {
   ContentRepository _contentRepository = ContentRepository();
   ApiResponse apiPostResponse = ApiResponse.loading('Fetching Details');
   ApiResponse apiEventsResponse;
+  Map<String, ApiResponse> responseMap = {};
   // static SharedPreferences _sharedPreferences;
   StateManager.createInstance();
   List<PostModel> listOfPost = [];
   List<PostModel> listOfEvents = [];
+  List<PostModel> newReleaseList = [];
+  List<PostModel> qouteList = [];
+  List<PostModel> videoList = [];
+  List<PostModel> jokeList = [];
+  List<PostModel> interViewList = [];
+  List<PostModel> articlesList = [];
   factory StateManager() {
     if (_stateManager == null) {
       _stateManager = StateManager
@@ -39,6 +46,32 @@ class StateManager with ChangeNotifier {
     try {
       listOfEvents = await _contentRepository.getEvents();
       apiEventsResponse = ApiResponse.completed(listOfEvents);
+    } catch (e) {
+      apiEventsResponse = ApiResponse.error(e.toString());
+      print(e);
+    }
+    notifyListeners();
+  }
+
+  fetchNewRelease() async {
+    apiEventsResponse = ApiResponse.loading('Fetching Data');
+    responseMap['fetchNewRelease'] = ApiResponse.loading('Fetching Data');
+    try {
+      newReleaseList = await _contentRepository.getNewRelease();
+      apiEventsResponse = ApiResponse.completed(newReleaseList);
+    } catch (e) {
+      apiEventsResponse = ApiResponse.error(e.toString());
+      print(e);
+    }
+    notifyListeners();
+  }
+
+  fetchQoutes() async {
+    apiEventsResponse = ApiResponse.loading('Fetching Data');
+    responseMap['fetchQoutes'] = ApiResponse.loading('Fetching Data');
+    try {
+      qouteList = await _contentRepository.getQoutes();
+      apiEventsResponse = ApiResponse.completed(qouteList);
     } catch (e) {
       apiEventsResponse = ApiResponse.error(e.toString());
       print(e);

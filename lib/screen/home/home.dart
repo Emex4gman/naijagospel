@@ -1,9 +1,12 @@
 import 'package:naijagospel/api/api_manager.dart';
+import 'package:naijagospel/components/banner.dart';
 import 'package:naijagospel/components/custom_header.dart';
 import 'package:naijagospel/components/custom_indiviual_tile.dart';
 import 'package:naijagospel/components/default_scafold.dart';
 import 'package:flutter/material.dart';
+import 'package:naijagospel/components/drawer.dart';
 import 'package:naijagospel/components/featured_container.dart';
+import 'package:naijagospel/components/footer.dart';
 import 'package:naijagospel/components/horizontal_event_widget.dart';
 import 'package:naijagospel/models/post_model.dart';
 import 'package:naijagospel/service/state_manager.dart';
@@ -16,13 +19,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ApiManager apiManager = ApiManager();
-  StateManager stateManager = StateManager();
+  final ApiManager apiManager = ApiManager();
+  final StateManager stateManager = StateManager();
   int eventPage = 2;
   void initHome() async {
     stateManager.getlistOfPost();
     stateManager.fetchEvents();
+    stateManager.fetchNewRelease();
+    stateManager.fetchQoutes();
     setState(() {});
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _openDrawer() {
+    _scaffoldKey.currentState.openDrawer();
+  }
+
+  void _closeDrawer() {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -31,21 +46,16 @@ class _HomeScreenState extends State<HomeScreen> {
     initHome();
   }
 
-  List<Widget> _returnPost(List<PostModel> item, {FontScaler fontScaler}) {
-    List<Widget> _list = [];
-
-    for (var i = 0; i < item.length; i++) {
-      _list.add(GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/post', arguments: item[i]),
-        child: CustomIndiviualTile(
-          imgUrl: item[i].imgUrl,
-          shortDescription: item[i].shortDescription,
-          title: item[i].title,
-          fontScaler: fontScaler,
-        ),
-      ));
-    }
-    return _list;
+  List<Widget> _returnPost(List<PostModel> items, {FontScaler fontScaler}) {
+    return List<Widget>.from(items.map((item) => GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/post', arguments: item),
+          child: CustomIndiviualTile(
+            imgUrl: item.imgUrl,
+            shortDescription: item.shortDescription,
+            title: item.title,
+            fontScaler: fontScaler,
+          ),
+        )));
   }
 
   @override
@@ -59,144 +69,98 @@ class _HomeScreenState extends State<HomeScreen> {
     final fontScaler = FontScaler(context);
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
-    return DefaultScaffold(
-      body: RefreshIndicator(
-        onRefresh: () {
-          return Future.delayed(Duration(seconds: 1), () {
-            print('adadad');
-          });
-        },
-        child: ListView(
-          children: <Widget>[
-            CustomHeader(),
-            SizedBox(height: 10),
-            FeaturedContainer(
-              height: _height,
-              state: state,
-            ),
-            SizedBox(height: 5),
-            Container(
-              height: 20,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'EVENTS',
-                    style: TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'MORE EVENTS ➡️',
-                    style: TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold),
-                  ),
-                ],
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: MyDrawer(),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future.delayed(Duration(seconds: 1), () {
+              print('adadad');
+            });
+          },
+          child: ListView(
+            children: <Widget>[
+              CustomHeader(openDrawer: _openDrawer),
+              SizedBox(height: 10),
+              FeaturedContainer(
+                height: _height,
+                state: state,
               ),
-            ),
-            Container(
-              height: _height * 0.20,
-              color: Colors.white,
-              child: HorizontalEventWidget(),
-            ),
-            Container(
-              height: 20,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'MORE NEWS',
-                    style: TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-            ),
-            ..._returnPost(state.listOfPost, fontScaler: fontScaler),
-            Container(
-              height: 20,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'FEATURED VIDEO',
-                    style: TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Center(child: Text('Video palyer goes here')),
-              ),
-            ),
-            Divider(height: 5, color: Colors.white),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Container(
-                  height: 30,
-                  child: Center(child: Text('HEADLINES')),
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15))),
-                )),
-                SizedBox(width: 20),
-                Expanded(
-                    child: Container(
-                  height: 30,
-                  child: Center(child: Text('TREANDING')),
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15))),
-                )),
-              ],
-            ),
-            ..._returnPost(state.listOfPost, fontScaler: fontScaler),
-            Container(
-              // height: _height * 0.15,
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(color: Colors.white),
-              child: Column(
-                children: <Widget>[
-                  Image.asset(
-                    'assets/nglogo.png',
-                    height: 40.0,
-                  ),
-                  SizedBox(height: 5.0),
-                  Text(
-                    "NAIJAGOSPEL",
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        fontFamily: "Felix Titling",
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff0c7ea2)),
-                  ),
-                  Text(
-                      'COPYRIGHT(C) 2013 - ${new DateTime.now().year} NaijaGospel Entertainment',
+              SizedBox(height: 5),
+              Container(
+                height: 20,
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'EVENTS',
                       style: TextStyle(
-                          color: Colors.black, fontSize: fontScaler.sp(20))),
-                  Text('RC Number: 2940160',
+                          color: Colors.black54, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'MORE EVENTS ➡️',
                       style: TextStyle(
-                          color: Colors.black, fontSize: fontScaler.sp(20)))
+                          color: Colors.black54, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: _height * 0.20,
+                color: Colors.white,
+                child: HorizontalEventWidget(),
+              ),
+              CustomBanner('MORE NEWS'),
+
+              ..._returnPost(state.listOfPost, fontScaler: fontScaler),
+              CustomBanner('FEATURED VIDEO'),
+              Container(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Center(child: Text('Video palyer goes here')),
+                ),
+              ),
+              Divider(height: 5, color: Colors.white),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Container(
+                    height: 30,
+                    child: Center(child: Text('HEADLINES')),
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                  )),
+                  SizedBox(width: 20),
+                  Expanded(
+                      child: Container(
+                    height: 30,
+                    child: Center(child: Text('TREANDING')),
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                  )),
                 ],
               ),
-            )
-          ],
+
+              CustomBanner('NEW RELEASE'),
+              ..._returnPost(state.newReleaseList, fontScaler: fontScaler),
+
+              CustomBanner('QOUTES'),
+
+              ..._returnPost(state.qouteList, fontScaler: fontScaler),
+              // ..._returnPost(state.listOfPost, fontScaler: fontScaler),
+              Footer()
+            ],
+          ),
         ),
       ),
     );

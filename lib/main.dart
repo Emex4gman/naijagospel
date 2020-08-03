@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Cambria',
           primaryColor: Colors.white,
           textTheme: TextTheme(bodyText2: TextStyle(color: Colors.white)),
+          scaffoldBackgroundColor: Colors.black,
           iconTheme: IconThemeData(color: Colors.white, size: 30),
           primarySwatch: MaterialColor(0xFF176628, color),
           visualDensity: VisualDensity.adaptivePlatformDensity,

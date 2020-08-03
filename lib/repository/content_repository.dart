@@ -1,25 +1,52 @@
 import 'package:naijagospel/api/api_manager.dart';
 import 'package:naijagospel/models/post_model.dart';
 
-class ContentRepository {
-  ApiManager _apiManager = ApiManager();
+abstract class BaseContentRepository {
+  getPostPage();
+  getEvents({int page = 1});
+  getLyrics({int page = 1});
+  getNewRelease({int page = 1});
+  getVideos({int page = 1});
+}
+
+class ContentRepository extends BaseContentRepository {
+  ApiManager _api = ApiManager();
 
   Future<List<PostModel>> getPostPage() async {
-    List<PostModel> eventList = [];
-    final response = await _apiManager.fetchPost('posts');
-    for (var i = 0; i < response.length; i++) {
-      eventList.add(PostModel.formJson(response[i]));
-    }
-    return eventList;
+    final response = await _api.fetchPost('posts');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
   }
 
   Future<List<PostModel>> getEvents({int page = 1}) async {
-    List<PostModel> eventList = [];
-    final response =
-        await _apiManager.fetchPost('posts?categories=4&page=$page');
-    for (var i = 0; i < response.length; i++) {
-      eventList.add(PostModel.formJson(response[i]));
-    }
-    return eventList;
+    final response = await _api.fetchPost('posts?categories=4&page=$page');
+
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
+  }
+
+  Future getInterViews({int page = 1}) async {
+    final response = await _api.fetchPost('posts?categories=6&page=$page');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
+  }
+
+  Future getLyrics({int page = 1}) async {
+    final response = await _api.fetchPost('posts?categories=6&page=$page');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
+  }
+
+  @override
+  getNewRelease({int page = 1}) async {
+    final response = await _api.fetchPost('posts?categories=10&page=$page');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
+  }
+
+  getQoutes({int page = 1}) async {
+    final response = await _api.fetchPost('posts?categories=11&page=$page');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
+  }
+
+  @override
+  getVideos({int page = 1}) async {
+    final response = await _api.fetchPost('posts?categories=13&page=$page');
+    return List<PostModel>.from(response.map((x) => PostModel.formJson(x)));
   }
 }
